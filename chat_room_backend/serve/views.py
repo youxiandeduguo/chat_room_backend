@@ -1,8 +1,14 @@
 from django.shortcuts import render,HttpResponse
 from django.http import JsonResponse
 from . import models
+import os
+import sys
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), 'chat_room_backend')))
 
-# Create your views here.
+
+users=[]
+
+
 
 
 
@@ -24,4 +30,17 @@ def select_friend(request):
 
 
     return JsonResponse(friend,safe=False)
+
+def login(request):
+    # ip_address=request.GET.get('ip_address')
+    user_name=request.GET.get('user_name')
+    print('||',user_name)
+    if user_name =='':
+        return HttpResponse("用户名不能为空")
+    chatuser=ChatUser("127.0.0.1","8080",user_name)
+    users.append({'obj':chatuser,'name':user_name})
+    return HttpResponse("登录成功")
+
+
+
 
