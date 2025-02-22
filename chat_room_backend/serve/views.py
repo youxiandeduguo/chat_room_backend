@@ -37,8 +37,6 @@ def login(request):
     print('||',user_name)
     if user_name =='':
         return HttpResponse("用户名不能为空")
-    chatuser=ChatUser("127.0.0.1","8080",user_name)
-    users.append({'obj':chatuser,'name':user_name})
     return HttpResponse("登录成功")
 
 
