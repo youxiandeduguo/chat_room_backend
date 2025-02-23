@@ -21,3 +21,11 @@ class Friend(models.Model):
 
     class Meta:
         db_table='Chat_Friend'
+
+class Messages(models.Model):
+    user1=models.CharField('用户一',max_length=32)
+    user2=models.CharField('用户二',max_length=32)
+    Message=models.CharField('消息',max_length=128)
+
+    class Meta:
+        db_table='Chat_Message'

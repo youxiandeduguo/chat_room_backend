@@ -19,7 +19,8 @@ class ChatConsumer(AsyncWebsocketConsumer):
             online_users[self.room_name].append(self.user_name)
 
         else:
-            online_users[self.room_name].append(self.user_name)
+            if self.user_name not in online_users[self.room_name]:
+                online_users[self.room_name].append(self.user_name)
 
         await self.channel_layer.group_send(
             self.room_name,  
@@ -52,6 +53,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
     async def receive(self, text_data):
 
         data = json.loads(text_data)
+        print(data)
         message = data['message']
         sender=data['sender']
 

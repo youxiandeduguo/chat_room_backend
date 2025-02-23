@@ -1,8 +1,11 @@
 from django.shortcuts import render,HttpResponse
 from django.http import JsonResponse
+from django.db.models import Q
+from django.views.decorators.csrf import csrf_exempt
 from . import models
 import os
 import sys
+import json
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), 'chat_room_backend')))
 
 
@@ -38,6 +41,31 @@ def login(request):
     if user_name =='':
         return HttpResponse("用户名不能为空")
     return HttpResponse("登录成功")
+
+def get_history(request):
+    message_list=[]
+    username=request.GET.get('username')
+    to_name=request.GET.get('to_name')
+    messages=models.Messages.objects.filter((Q(user1=username)&Q(user2=username))|(Q(user2=username)&Q(user1=username)))
+    for message in messages.values('user1','user2','Message'):
+        if message['user1']==username:
+            message_list.append({'user1':username,'message':message['Message']})
+        else:
+            message_list.append({'user1':to_name,'message':message['Message']})
+    
+    return JsonResponse(message_list,safe=False)
+
+@csrf_exempt
+def append_history(request):
+    data = json.loads(request.body)
+    user1 = data.get('user1')
+    user2 = data.get('user2')
+    new_messages = data.get('new_messages')
+
+
+
+
+
 
 
 
