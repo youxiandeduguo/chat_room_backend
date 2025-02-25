@@ -36,22 +36,31 @@ def select_friend(request):
 
 def login(request):
     # ip_address=request.GET.get('ip_address')
-    user_name=request.GET.get('user_name')
-    print('||',user_name)
-    if user_name =='':
-        return HttpResponse("用户名不能为空")
-    return HttpResponse("登录成功")
+    username=request.GET.get('username')
+    print(username)
+    if username =='':
+        return HttpResponse("用户名不能为空",status=400)
+    
+    user=models.User.objects.filter(name=username)
+    if user.exists():
+        user_info={
+            'id':user.first().id,
+            'name':user.first().name
+        }
+        return JsonResponse(user_info)
+    else: 
+        return HttpResponse("用户不存在",status=404)
 
 def get_history(request):
     message_list=[]
     username=request.GET.get('username')
     to_name=request.GET.get('to_name')
-    messages=models.Messages.objects.filter((Q(user1=username)&Q(user2=username))|(Q(user2=username)&Q(user1=username)))
-    for message in messages.values('user1','user2','Message'):
+    messages=models.Messages.objects.filter((Q(user1=username)&Q(user2=to_name))|(Q(user1=to_name)&Q(user2=username)))
+    for message in messages.values('user1','user2','Message','time'):
         if message['user1']==username:
-            message_list.append({'user1':username,'message':message['Message']})
+            message_list.append({'sender':username,'message':message['Message'],'time':message['time']})
         else:
-            message_list.append({'user1':to_name,'message':message['Message']})
+            message_list.append({'sender':to_name,'message':message['Message'],'time':message['time']})
     
     return JsonResponse(message_list,safe=False)
 
