@@ -38,7 +38,9 @@ class ChatConsumer(AsyncWebsocketConsumer):
             self.room_name,
             self.channel_name,
         )
-        online_users[self.room_name].remove(self.user_name)
+        if(online_users[self.room_name].count(self.user_name)):
+
+            online_users[self.room_name].remove(self.user_name)
         
         await self.channel_layer.group_send(
             self.room_name,  
